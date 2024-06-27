@@ -93,6 +93,31 @@ app.post("/usuarios/:id/delete", async (req, res) => {
 });
 
 // Rotas para cartões
+app.get("./usuarios/:id/cartoes", async(req, res) =>{
+  const id = parseInt(req.params.id);
+  const usuario = await Usuario.findByPk(id, { include:
+  ["Cartaos"] });
+
+  let cartoes = usuario.Cartaos;
+  cartoes = cartoes.map((cartao) => cartao.toJSON())
+
+  res.render("cartoes", {
+    usuario: usuario.toJSON(),
+    cartoes,
+  })
+})
+
+app.get ("usuarios/:id/novoCartao", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const dadosCartao={
+    numero: req.body.numero,
+    nome: req.body.nome,
+    cvv: req.body.cvv,
+    UsuarioId: id,
+  };
+  await Cartao. create(dadosCartao);
+  res.redirect(`/usuarios/${id}/cartoes`)
+});
 
 //Ver cartões do usuário
 app.get("/usuarios/:id/cartoes", async (req, res) => {
